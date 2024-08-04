@@ -11,11 +11,18 @@
 		"@sveltejs/adapter-auto": "^3.0.0",
 		"@sveltejs/kit": "^2.0.0",
 		"@sveltejs/vite-plugin-svelte": "^3.0.0",
+		"autoprefixer": "^10.4.19",
+		"postcss": "^8.4.38",
 		"svelte": "^4.2.7",
+		"tailwindcss": "^3.4.4",
 		"vite": "^5.0.3"
 	},
 	"type": "module",
 	"dependencies": {
+		"@popperjs/core": "^2.11.8",
+		"classnames": "^2.5.1",
+		"flowbite": "^2.4.1",
+		"flowbite-svelte": "^0.46.15",
 		"gray-matter": "^4.0.3",
 		"marked": "^13.0.3"
 	}
