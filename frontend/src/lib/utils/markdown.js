@@ -1,34 +1,61 @@
-import fs from 'fs';
-import { marked } from 'marked';
-import matter from 'gray-matter';
+import { browser } from '$app/environment';
 import { error } from '@sveltejs/kit';
 
-export function getPost(slug) {
-    const file = `static/posts/${slug}.md`;
-    if (!fs.existsSync(file)) {
-        throw error(404, `Post not found: ${slug}`);
+// 서버 사이드에서만 실행
+async function loadMarkdownModule() {
+    if (!browser) {
+        const fs = await import('fs/promises');
+        const path = await import('path');
+        const matter = await import('gray-matter');
+        const marked = await import('marked');
+        return { fs, path, matter: matter.default, marked };
     }
-    const post = fs.readFileSync(file, 'utf-8');
-    const { data, content } = matter(post);
-    const html = marked(content);
-    
-    return {
-        meta: data,
-        html
-    };
+    return null;
 }
 
-export function getAllPosts() {
-    const files = fs.readdirSync('static/posts');
-    return files
+export async function getPost(slug) {
+    const module = await loadMarkdownModule();
+    if (!module) {
+        throw error(500, 'Cannot load post on client side');
+    }
+    const { fs, path, matter, marked } = module;
+    
+    const file = path.join(process.cwd(), 'static', 'posts', `${slug}.md`);
+    try {
+        const post = await fs.readFile(file, 'utf-8');
+        const { data, content } = matter(post);
+        const html = marked.parse(content);
+        
+        return {
+            meta: data,
+            html
+        };
+    } catch (err) {
+        console.error(err);
+        throw error(404, `Post not found: ${slug}`);
+    }
+}
+
+export async function getAllPosts() {
+    const module = await loadMarkdownModule();
+    if (!module) {
+        return []; // 클라이언트 사이드에서는 빈 배열 반환
+    }
+    const { fs, path, matter } = module;
+    
+    const postsDirectory = path.join(process.cwd(), 'static', 'posts');
+    const files = await fs.readdir(postsDirectory);
+    
+    const posts = await Promise.all(files
         .filter(file => file.endsWith('.md'))
-        .map(file => {
-            const post = fs.readFileSync(`static/posts/${file}`, 'utf-8');
+        .map(async file => {
+            const post = await fs.readFile(path.join(postsDirectory, file), 'utf-8');
             const { data } = matter(post);
             return {
                 slug: file.replace('.md', ''),
                 meta: data
             };
-        })
-        .sort((a, b) => new Date(b.meta.date) - new Date(a.meta.date));
+        }));
+    
+    return posts.sort((a, b) => new Date(b.meta.date) - new Date(a.meta.date));
 }
