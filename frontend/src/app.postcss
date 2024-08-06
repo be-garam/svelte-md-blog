@@ -1,0 +1,44 @@
+/* src/app.postcss */
+
+/* Tailwind의 기본 스타일 */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* 글래스모피즘 효과를 위한 사용자 정의 스타일 */
+@layer components {
+  .bg-glass {
+    @apply bg-white bg-opacity-25 dark:bg-black dark:bg-opacity-25;
+  }
+  
+  .backdrop-glass {
+    @apply backdrop-filter backdrop-blur-lg;
+  }
+}
+
+/* 추가적인 글로벌 스타일 */
+@layer base {
+  body {
+    @apply text-gray-900 dark:text-white;
+  }
+
+  /* 스크롤바 스타일링 (선택사항) */
+  ::-webkit-scrollbar {
+    @apply w-2;
+  }
+
+  ::-webkit-scrollbar-track {
+    @apply bg-transparent;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    @apply bg-gray-300 dark:bg-gray-700 rounded-full;
+  }
+}
+
+/* 프로젝트 전반에 걸쳐 사용할 수 있는 사용자 정의 유틸리티 클래스 */
+@layer utilities {
+  .text-shadow {
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+  }
+}

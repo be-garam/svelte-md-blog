@@ -1,10 +1,6 @@
-<script>
-    import { Card } from 'flowbite-svelte';
-</script>
-
-<Card>
-    <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">Welcome to My Blog</h5>
-    <p class="font-normal text-gray-700 dark:text-gray-400 leading-tight">
-        This is a simple blog built with SvelteKit and Markdown.
+<div class="bg-glass dark:bg-glass-dark backdrop-filter backdrop-glass rounded-lg shadow-lg p-6">
+    <h1 class="text-3xl font-bold text-gray-900 dark:text-white mb-4">Welcome to My Blog</h1>
+    <p class="text-gray-700 dark:text-gray-300">
+      This is a simple blog built with SvelteKit and Markdown, featuring a glassmorphism design and dark mode.
     </p>
-</Card>
+  </div>
