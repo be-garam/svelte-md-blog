@@ -39,23 +39,29 @@ export async function getPost(slug) {
 export async function getAllPosts() {
     const module = await loadMarkdownModule();
     if (!module) {
-        return []; // 클라이언트 사이드에서는 빈 배열 반환
+        console.warn('Running on client side, returning empty array');
+        return [];
     }
     const { fs, path, matter } = module;
     
     const postsDirectory = path.join(process.cwd(), 'static', 'posts');
-    const files = await fs.readdir(postsDirectory);
-    
-    const posts = await Promise.all(files
-        .filter(file => file.endsWith('.md'))
-        .map(async file => {
-            const post = await fs.readFile(path.join(postsDirectory, file), 'utf-8');
-            const { data } = matter(post);
-            return {
-                slug: file.replace('.md', ''),
-                meta: data
-            };
-        }));
-    
-    return posts.sort((a, b) => new Date(b.meta.date) - new Date(a.meta.date));
+    try {
+        const files = await fs.readdir(postsDirectory);
+        
+        const posts = await Promise.all(files
+            .filter(file => file.endsWith('.md'))
+            .map(async file => {
+                const post = await fs.readFile(path.join(postsDirectory, file), 'utf-8');
+                const { data } = matter(post);
+                return {
+                    slug: file.replace('.md', ''),
+                    meta: data
+                };
+            }));
+        
+        return posts.sort((a, b) => new Date(b.meta.date) - new Date(a.meta.date));
+    } catch (error) {
+        console.error('Error reading posts directory:', error);
+        return [];
+    }
 }
