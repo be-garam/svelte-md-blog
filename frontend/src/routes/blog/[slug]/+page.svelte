@@ -1,5 +1,6 @@
 <script>
   export let data;
+  console.log(data);
 </script>
 
 {#if data.post}
